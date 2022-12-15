@@ -262,7 +262,7 @@ function ConRO.Mage.Arcane(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 		end
 
 	if _is_PvP then
-		if pvpChosen[PvPTalent.ArcaneEmpowerment.spellID] then
+		if pvpChosen[PvPTalent.ArcaneEmpowerment] then
 			_Clearcasting_BUFF, _Clearcasting_COUNT, _Clearcasting_MCOUNT = _ClearcastingAE_BUFF, _ClearcastingAE_COUNT, 5;
 		end
 	end
