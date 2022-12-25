@@ -861,11 +861,11 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	end
 
 	if _is_PvP then
-		if pvpChosen[PvPTalent.IceForm] then
+		if pvpChosen[PvPTalent.IceForm.spellID] then
 			_IcyVeins_RDY = _IcyVeins_RDY and _IceForm_CD <= 0
 			_IcyVeins = _IceForm;
 		end
-		if pvpChosen[PvPTalent.ConcentratedCoolness] then
+		if pvpChosen[PvPTalent.ConcentratedCoolness.spellID] then
 			_FrozenOrb_RDY = _FrozenOrb_RDY and _ConcentratedCoolness_FrozenOrb_CD <= 0;
 			_FrozenOrb = _ConcentratedCoolness_FrozenOrb;
 		end
