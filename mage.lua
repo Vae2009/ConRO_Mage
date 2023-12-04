@@ -241,9 +241,6 @@ function ConRO.Mage.Arcane(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _ArcaneOrb, _ArcaneOrb_RDY = ConRO:AbilityReady(Ability.ArcaneOrb, timeShift);
 	local _NetherTempest, _NetherTempest_RDY = ConRO:AbilityReady(Ability.NetherTempest, timeShift);
 		local _NetherTempest_DEBUFF = ConRO:TargetAura(Debuff.NetherTempest, timeShift + 3);
-	local _RuneofPower, _RuneofPower_RDY = ConRO:AbilityReady(Ability.RuneofPower, timeShift);
-		local _RuneofPower_CHARGES = ConRO:SpellCharges(_RuneofPower);
-		local _RuneofPower_BUFF = ConRO:Form(Form.RuneofPower);
 	local _Shimmer, _Shimmer_RDY = ConRO:AbilityReady(Ability.Shimmer, timeShift);
 
 
@@ -285,7 +282,6 @@ function ConRO.Mage.Arcane(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 
 	ConRO:AbilityBurst(_ArcaneSurge, _ArcaneSurge_RDY and _RadiantSparkVulnerability_COUNT == 3 and ConRO:BurstMode(_ArcaneSurge));
 	ConRO:AbilityBurst(_PresenceofMind, _PresenceofMind_RDY and not _PresenceofMind_BUFF and _ArcanePower_BUFF and _ArcanePower_DUR <= 3 and ConRO:BurstMode(_PresenceofMind));
-	ConRO:AbilityBurst(_RuneofPower, _RuneofPower_RDY and not _RuneofPower_BUFF and not _ArcanePower_BUFF and currentSpell ~= _RuneofPower and ConRO:BurstMode(_RuneofPower));
 	ConRO:AbilityBurst(_TimeWarp, _TimeWarp_RDY and tChosen[Passive.TemporalWarp.talentID] and (_TemporalDisplacement or ConRO:IsSolo()) and ConRO:BurstMode(_TimeWarp));
 	ConRO:AbilityBurst(_TouchoftheMagi, _TouchoftheMagi_RDY and _ArcaneCharges <= 0 and currentSpell ~= _TouchoftheMagi and ConRO:BurstMode(_TouchoftheMagi));
 
@@ -366,11 +362,6 @@ function ConRO.Mage.Arcane(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				tinsert(ConRO.SuggestedSpells, _ArcaneOrb);
 				_ArcaneOrb_RDY = false;
 				_ArcaneCharges = _ArcaneCharges + 1;
-			end
-
-			if _RuneofPower_RDY and not _RuneofPower_BUFF and currentSpell ~= _RuneofPower and ConRO:FullMode(_RuneofPower) then
-				tinsert(ConRO.SuggestedSpells, _RuneofPower);
-				_RuneofPower_RDY = false;
 			end
 
 			if _PresenceofMind_RDY and not _PresenceofMind_BUFF and ConRO:FullMode(_PresenceofMind) then
@@ -551,9 +542,6 @@ function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _Spellsteal, _Spellsteal_RDY 																	= ConRO:AbilityReady(Ability.Spellsteal, timeShift);
 	local _LivingBomb, _LivingBomb_RDY 																	= ConRO:AbilityReady(Ability.LivingBomb, timeShift);
 	local _Meteor, _Meteor_RDY 																			= ConRO:AbilityReady(Ability.Meteor, timeShift);
-	local _RuneofPower, _RuneofPower_RDY																= ConRO:AbilityReady(Ability.RuneofPower, timeShift);
-		local _RuneofPower_CHARGES, _, _RuneofPower_CCD														= ConRO:SpellCharges(_RuneofPower);
-		local _RuneofPower_BUFF 																			= ConRO:Form(Form.RuneofPower);
 	local _Shimmer, _Shimmer_RDY 																		= ConRO:AbilityReady(Ability.Shimmer, timeShift);
 
 	local _ShiftingPower, _ShiftingPower_RDY															= ConRO:AbilityReady(Ability.ShiftingPower, timeShift);
@@ -578,7 +566,7 @@ function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	ConRO:AbilityRaidBuffs(_ArcaneIntellect, _ArcaneIntellect_RDY and not ConRO:RaidBuff(Buff.ArcaneIntellect));
 
 	ConRO:AbilityBurst(_Combustion, _Combustion_RDY and _HotStreak_BUFF and (currentSpell == _Fireball or currentSpell == _Scorch) and ConRO:BurstMode(_Combustion));
-	ConRO:AbilityBurst(_Meteor, _Meteor_RDY and (((not tChosen[Ability.RuneofPower.talentID] or (tChosen[Ability.RuneofPower.talentID] and (_RuneofPower_BUFF or currentSpell == _RuneofPower)) or _Combustion_CD > 40) and not _Combustion_RDY) or _Combustion_BUFF) and ConRO:BurstMode(_Meteor));
+	ConRO:AbilityBurst(_Meteor, _Meteor_RDY and ((not _Combustion_RDY or _Combustion_BUFF) and (_Combustion_CD > 40)) and ConRO:BurstMode(_Meteor));
 
 	ConRO:AbilityBurst(_ShiftingPower, _ShiftingPower_RDY and _target_in_10yrds and not _Combustion_RDY and ConRO:BurstMode(_ShiftingPower));
 
@@ -694,11 +682,7 @@ function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			tinsert(ConRO.SuggestedSpells, _ShiftingPower);
 		end
 
-		if _RuneofPower_RDY and not _Combustion_RDY and not _RuneofPower_BUFF and (_RuneofPower_CHARGES >= 2 or (_RuneofPower_CHARGES ==1 and _RuneofPower_CCD <= 2) or _Pyroclasm_BUFF or _Meteor_RDY or (not tChosen[Ability.Meteor.talentID] and not tChosen[Passive.Pyroclasm.talentID])) and (_Combustion_CD > 40 or not _in_combat) and currentSpell ~= _RuneofPower and ConRO:FullMode(_RuneofPower) then
-			tinsert(ConRO.SuggestedSpells, _RuneofPower);
-		end
-
-		if _Meteor_RDY and (not tChosen[Ability.RuneofPower.talentID] or (tChosen[Ability.RuneofPower.talentID] and (_RuneofPower_BUFF or currentSpell == _RuneofPower)) or _Combustion_CD > 40) and not _Combustion_RDY and ConRO:FullMode(_Meteor) then
+		if _Meteor_RDY and _Combustion_CD > 40 and not _Combustion_RDY and ConRO:FullMode(_Meteor) then
 			tinsert(ConRO.SuggestedSpells, _Meteor);
 		end
 
@@ -842,9 +826,6 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _IceFloes, _IceFloes_RDY																		= ConRO:AbilityReady(Ability.IceFloes, timeShift);
 	local _IceNova, _IceNova_RDY 																		= ConRO:AbilityReady(Ability.IceNova, timeShift);
 	local _RayofFrost, _RayofRDY						 												= ConRO:AbilityReady(Ability.RayofFrost, timeShift);
-	local _RuneofPower, _RuneofPower_RDY									 							= ConRO:AbilityReady(Ability.RuneofPower, timeShift);
-		local _RuneofPower_CHARGES, _, _RuneofPower_CCD														= ConRO:SpellCharges(_RuneofPower);
-		local _RuneofPower_BUFF = ConRO:Form(Form.RuneofPower);
 	local _Shimmer, _Shimmer_RDY 																		= ConRO:AbilityReady(Ability.Shimmer, timeShift);
 
 	local _ConcentratedCoolness_FrozenOrb, _, _ConcentratedCoolness_FrozenOrb_CD						= ConRO:AbilityReady(PvPTalent.ConcentratedCoolness_FrozenOrb, timeShift);
@@ -891,7 +872,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	ConRO:AbilityBurst(_FrozenOrb, _FrozenOrb_RDY and ConRO:BurstMode(_FrozenOrb));
 	ConRO:AbilityBurst(_IcyVeins, _in_combat and _IcyVeins_RDY and ConRO:BurstMode(_IcyVeins));
 
-	ConRO:AbilityBurst(_ShiftingPower, _ShiftingPower_RDY and _target_in_10yrds and (not tChosen[Ability.RuneofPower] or (tChosen[Ability.RuneofPower.talentID] and _RuneofPower_CCD >= 16) or ConRO_AoEButton:IsVisible()) and ConRO:BurstMode(_ShiftingPower));
+	ConRO:AbilityBurst(_ShiftingPower, _ShiftingPower_RDY and _target_in_10yrds and ConRO_AoEButton:IsVisible() and ConRO:BurstMode(_ShiftingPower));
 
 --Warnings	
 	ConRO:Warnings("Call your Water Elemental!!!", not tChosen[Passive.LonelyWinter.talentID] and not _Pet_summoned and _SummonWaterElemental_RDY);
@@ -912,10 +893,6 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	end
 
 	if ((ConRO_AutoButton:IsVisible() and _enemies_in_40yrds >= 3) or ConRO_AoEButton:IsVisible()) then
-		if _RuneofPower_RDY and not _RuneofPower_BUFF and _IcyVeins_CD >= 10 and currentSpell ~= _RuneofPower and ConRO:FullMode(_RuneofPower) then
-			tinsert(ConRO.SuggestedSpells, _RuneofPower);
-		end
-
 		if _IcyVeins_RDY and ConRO:FullMode(_IcyVeins) then
 			tinsert(ConRO.SuggestedSpells, _IcyVeins);
 		end
@@ -952,7 +929,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			tinsert(ConRO.SuggestedSpells, _IceLance);
 		end
 
-		if _ShiftingPower_RDY and _target_in_10yrds and (not tChosen[Ability.RuneofPower.talentID] or (tChosen[Ability.RuneofPower.talentID] and _RuneofPower_CCD >= 16) or (ConRO_AutoButton:IsVisible() and _enemies_in_10yrds >= 3) or ConRO_AoEButton:IsVisible()) and ConRO:FullMode(_ShiftingPower) then
+		if _ShiftingPower_RDY and _target_in_10yrds and ((ConRO_AutoButton:IsVisible() and _enemies_in_10yrds >= 3) or ConRO_AoEButton:IsVisible()) and ConRO:FullMode(_ShiftingPower) then
 			tinsert(ConRO.SuggestedSpells, _ShiftingPower);
 		end
 
@@ -968,11 +945,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			tinsert(ConRO.SuggestedSpells, _Frostbolt);
 		end
 	else
-		if _RuneofPower_RDY and not _RuneofPower_BUFF and _IcyVeins_CD >= 10 and currentSpell ~= _RuneofPower and ConRO:FullMode(_RuneofPower) then
-			tinsert(ConRO.SuggestedSpells, _RuneofPower);
-		end
-
-		if _IcyVeins_RDY and not _RuneofPower_BUFF and ConRO:FullMode(_IcyVeins) then
+		if _IcyVeins_RDY and ConRO:FullMode(_IcyVeins) then
 			tinsert(ConRO.SuggestedSpells, _IcyVeins);
 		end
 
@@ -1071,7 +1044,6 @@ end
 function ConRO:BurnPhase()
 	local _, _ArcaneBlast_RDY = ConRO:AbilityReady(ids.Arc_Ability.ArcaneBlast, timeShift);
 	local _, _RadiantSpark_RDY = ConRO:AbilityReady(ids.Arc_Ability.RadiantSpark, timeShift);
-	local _, _RuneofPower_RDY =  ConRO:AbilityReady(ids.Arc_Ability.RuneofPower, timeShift);
 	local _, _TouchoftheMagi_RDY = ConRO:AbilityReady(ids.Arc_Ability.TouchoftheMagi, timeShift);
 		local _TouchoftheMagi_DEBUFF = ConRO:TargetAura(ids.Arc_Debuff.TouchoftheMagi, timeShift);
 
@@ -1079,7 +1051,7 @@ function ConRO:BurnPhase()
 		self.arcaneBurnPhase = false;
 	end
 
-	if not self.arcaneBurnPhase and ((self.PlayerTalents[ids.Arc_Ability.TouchoftheMagi.talentID] and _TouchoftheMagi_RDY) or not self.PlayerTalents[ids.Arc_Ability.TouchoftheMagi.talentID]) and ((self.PlayerTalents[ids.Arc_Ability.RadiantSpark.talentID] and _RadiantSpark_RDY) or not self.PlayerTalents[ids.Arc_Ability.RadiantSpark.talentID]) and ((self.PlayerTalents[ids.Arc_Ability.RuneofPower.talentID] and _RuneofPower_RDY) or not self.PlayerTalents[ids.Arc_Ability.RuneofPower.talentID]) then
+	if not self.arcaneBurnPhase and ((self.PlayerTalents[ids.Arc_Ability.TouchoftheMagi.talentID] and _TouchoftheMagi_RDY) or not self.PlayerTalents[ids.Arc_Ability.TouchoftheMagi.talentID]) and ((self.PlayerTalents[ids.Arc_Ability.RadiantSpark.talentID] and _RadiantSpark_RDY) or not self.PlayerTalents[ids.Arc_Ability.RadiantSpark.talentID]) then
 		self.arcaneBurnPhase = true;
 		print("Beginning Burn Phase!")
 	end

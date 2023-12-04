@@ -41,7 +41,6 @@ local ConRO_Mage, ids = ...;
 		},
 		RemoveCurse = {spellID = 475, talentID = 80175},
 		RingofFrost = {spellID = 113724, talentID = 80144},
-		RuneofPower = {spellID = 116011, talentID = 80171},
 		ShiftingPower = {spellID = 382440, talentID = 80141},
 		Shimmer = {spellID = 212653, talentID = 80163},
 		Slow = {spellID = 31589, talentID = 80154},
@@ -149,7 +148,6 @@ local ConRO_Mage, ids = ...;
 		ArcaneHarmony = 384455,
 		PresenceofMind = 205025,
 		IncantersFlow = 116267,
-		RuneofPower = 116014,
 	}
 	ids.Arc_Buff = {
 		ArcaneFamiliar = 210126,
@@ -201,7 +199,6 @@ local ConRO_Mage, ids = ...;
 		},
 		RemoveCurse = {spellID = 475, talentID = 80175},
 		RingofFrost = {spellID = 113724, talentID = 80144},
-		RuneofPower = {spellID = 116011, talentID = 80171},
 		ShiftingPower = {spellID = 382440, talentID = 80141},
 		Shimmer = {spellID = 212653, talentID = 80163},
 		Slow = {spellID = 31589, talentID = 80154},
@@ -306,7 +303,7 @@ local ConRO_Mage, ids = ...;
 		Kleptomania = 198100,
 	}
 	ids.Fire_Form = {
-		RuneofPower = 116014,	
+
 	}
 	ids.Fire_Buff = {
 		ArcaneIntellect = 1459,
@@ -356,7 +353,6 @@ local ConRO_Mage, ids = ...;
 		},
 		RemoveCurse = {spellID = 475, talentID = 80175},
 		RingofFrost = {spellID = 113724, talentID = 80144},
-		RuneofPower = {spellID = 116011, talentID = 80171},
 		ShiftingPower = {spellID = 382440, talentID = 80141},
 		Shimmer = {spellID = 212653, talentID = 80163},
 		Slow = {spellID = 31589, talentID = 80154},
@@ -457,7 +453,6 @@ local ConRO_Mage, ids = ...;
 	}
 	ids.Frost_Form = {
 		FreezingWinds = 382106,
-		RuneofPower = 116014,
 	}
 	ids.Frost_Buff = {
 		ArcaneIntellect = 1459,
