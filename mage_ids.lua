@@ -52,6 +52,7 @@ local ConRO_Mage, ids = ...;
 		GreaterInvisibility = {spellID = 110959, talentID = 115877},
 		IceBlock = {spellID = 45438, talentID = 80181},
 		IceCold = {spellID = 414659, talentID = 80141},
+			IceBlockIC = {spellID = 414658, talentID = 80141},
 		IceFloes = {spellID = 108839, talentID = 80162},
 		IceNova = {spellID = 157997, talentID = 80186},
 		IceWard = {spellID = 205036, talentID = 80142},
@@ -157,6 +158,7 @@ local ConRO_Mage, ids = ...;
 		NetherPrecision = 383783,
 		PrismaticBarrier = 235450,
 		RuleofThrees = 264774,
+		SiphonStorm = 384267,
 	}
 	ids.Arc_Debuff = {
 		NetherTempest = 114923,
@@ -165,9 +167,9 @@ local ConRO_Mage, ids = ...;
 		TouchoftheMagi = 210824,
 	}
 	ids.Arc_PetAbility = {
-			
+
 	}
-		
+
 --Fire
 	ids.Fire_Ability = {
 	--Mage Baseline
@@ -210,6 +212,7 @@ local ConRO_Mage, ids = ...;
 		GreaterInvisibility = {spellID = 110959, talentID = 115877},
 		IceBlock = {spellID = 45438, talentID = 80181},
 		IceCold = {spellID = 414659, talentID = 80141},
+			IceBlockIC = {spellID = 414658, talentID = 80141},
 		IceFloes = {spellID = 108839, talentID = 80162},
 		IceNova = {spellID = 157997, talentID = 80186},
 		IceWard = {spellID = 205036, talentID = 80142},
@@ -367,6 +370,7 @@ local ConRO_Mage, ids = ...;
 		IceBarrier = {spellID = 11426, talentID = 80176},
 		IceBlock = {spellID = 45438, talentID = 80181},
 		IceCold = {spellID = 414659, talentID = 80141},
+			IceBlockIC = {spellID = 414658, talentID = 80141},
 		IceFloes = {spellID = 108839, talentID = 80162},
 		IceNova = {spellID = 157997, talentID = 80186},
 		IceWard = {spellID = 205036, talentID = 80142},
