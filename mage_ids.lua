@@ -470,6 +470,7 @@ local ConRO_Mage, ids = ...;
 		IcyVeins = 12472,
 	}
 	ids.Frost_Debuff = {
+		TemporalDisplacement = 80354,
 		WintersChill = 228358,
 	}
 	ids.Frost_PetAbility = {
