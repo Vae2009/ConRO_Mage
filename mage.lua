@@ -20,13 +20,11 @@ function ConRO:EnableRotationModule(mode)
 			self.NextSpell = ConRO.Mage.Arcane;
 			self.ToggleDamage();
 			ConROWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
-			ConRONextWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 			ConRODefenseWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 		else
 			self.NextSpell = ConRO.Mage.Disabled;
 			self.ToggleHealer();
 			ConROWindow:SetAlpha(0);
-			ConRONextWindow:SetAlpha(0);
 			ConRODefenseWindow:SetAlpha(0);
 		end
 	end;
@@ -36,13 +34,11 @@ function ConRO:EnableRotationModule(mode)
 			self.NextSpell = ConRO.Mage.Fire;
 			self.ToggleDamage();
 			ConROWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
-			ConRONextWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 			ConRODefenseWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 		else
 			self.NextSpell = ConRO.Mage.Disabled;
 			self.ToggleHealer();
 			ConROWindow:SetAlpha(0);
-			ConRONextWindow:SetAlpha(0);
 			ConRODefenseWindow:SetAlpha(0);
 		end
 	end;
@@ -52,13 +48,11 @@ function ConRO:EnableRotationModule(mode)
 			self.NextSpell = ConRO.Mage.Frost;
 			self.ToggleDamage();
 			ConROWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
-			ConRONextWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 			ConRODefenseWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 		else
 			self.NextSpell = ConRO.Mage.Disabled;
 			self.ToggleHealer();
 			ConROWindow:SetAlpha(0);
-			ConRONextWindow:SetAlpha(0);
 			ConRODefenseWindow:SetAlpha(0);
 		end
 	end;
@@ -104,107 +98,99 @@ function ConRO.Mage.Disabled(_, timeShift, currentSpell, gcd, tChosen, pvpChosen
 	return nil;
 end
 
-function ConRO.Mage.Under10(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Mage_Ability, ids.Mage_Form, ids.Mage_Buff, ids.Mage_Debuff, ids.Mage_PetAbility, ids.Mage_PvPTalent, ids.Glyph;
 --Info
-	local _Player_Level																					= UnitLevel("player");
-	local _Player_Percent_Health 																		= ConRO:PercentHealth('player');
-	local _is_PvP																						= ConRO:IsPvP();
-	local _in_combat 																					= UnitAffectingCombat('player');
-	local _party_size																					= GetNumGroupMembers();
-
-	local _is_PC																						= UnitPlayerControlled("target");
-	local _is_Enemy 																					= ConRO:TarHostile();
-	local _Target_Health 																				= UnitHealth('target');
-	local _Target_Percent_Health 																		= ConRO:PercentHealth('target');
+local _Player_Level = UnitLevel("player");
+local _Player_Percent_Health = ConRO:PercentHealth('player');
+local _is_PvP = ConRO:IsPvP();
+local _in_combat = UnitAffectingCombat('player');
+local _party_size = GetNumGroupMembers();
+local _is_PC = UnitPlayerControlled("target");
+local _is_Enemy = ConRO:TarHostile();
+local _Target_Health = UnitHealth('target');
+local _Target_Percent_Health = ConRO:PercentHealth('target');
 
 --Resources
-	local _Mana, _Mana_Max, _Mana_Percent																= ConRO:PlayerPower('Mana');
+local _Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
+local _ArcaneCharges = ConRO:PlayerPower('ArcaneCharges');
+
+--Conditions
+local _is_moving = ConRO:PlayerSpeed();
+local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
+local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
+local _enemies_in_25yrds, _target_in_25yrds = ConRO:Targets("25");
+local _enemies_in_40yrds, _target_in_40yrds = ConRO:Targets("40");
+local _can_Execute = _Target_Percent_Health < 20;
 
 --Racials
-	local _AncestralCall, _AncestralCall_RDY															= ConRO:AbilityReady(ids.Racial.AncestralCall, timeShift);
-	local _ArcanePulse, _ArcanePulse_RDY																= ConRO:AbilityReady(ids.Racial.ArcanePulse, timeShift);
-	local _Berserking, _Berserking_RDY																	= ConRO:AbilityReady(ids.Racial.Berserking, timeShift);
-	local _ArcaneTorrent, _ArcaneTorrent_RDY															= ConRO:AbilityReady(ids.Racial.ArcaneTorrent, timeShift);
+local _AncestralCall, _AncestralCall_RDY = _, _;
+local _ArcanePulse, _ArcanePulse_RDY = _, _;
+local _Berserking, _Berserking_RDY = _, _;
+local _ArcaneTorrent, _ArcaneTorrent_RDY = _, _;
+
+function ConRO:Stats()
+	_Player_Level = UnitLevel("player");
+	_Player_Percent_Health = ConRO:PercentHealth('player');
+	_is_PvP = ConRO:IsPvP();
+	_in_combat = UnitAffectingCombat('player');
+	_party_size = GetNumGroupMembers();
+	_is_PC = UnitPlayerControlled("target");
+	_is_Enemy = ConRO:TarHostile();
+	_Target_Health = UnitHealth('target');
+	_Target_Percent_Health = ConRO:PercentHealth('target');
+
+	_Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
+	_ArcaneCharges = ConRO:PlayerPower('ArcaneCharges');
+
+	_is_moving = ConRO:PlayerSpeed();
+	_enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
+	_enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
+	_enemies_in_25yrds, _target_in_25yrds = ConRO:Targets("25");
+	_enemies_in_40yrds, _target_in_40yrds = ConRO:Targets("40");
+	_can_Execute = _Target_Percent_Health < 20;
+
+	_AncestralCall, _AncestralCall_RDY = ConRO:AbilityReady(ids.Racial.AncestralCall, timeShift);
+	_ArcanePulse, _ArcanePulse_RDY = ConRO:AbilityReady(ids.Racial.ArcanePulse, timeShift);
+	_Berserking, _Berserking_RDY = ConRO:AbilityReady(ids.Racial.Berserking, timeShift);
+	_ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(ids.Racial.ArcaneTorrent, timeShift);
+end
+
+function ConRO.Mage.Under10(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
+	wipe(ConRO.SuggestedSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Mage_Ability, ids.Mage_Form, ids.Mage_Buff, ids.Mage_Debuff, ids.Mage_PetAbility, ids.Mage_PvPTalent;
 
 --Abilities
 
 --Conditions
-	local _is_moving 																					= ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee															= ConRO:Targets("Melee");
-	local _target_in_10yrds 																			= CheckInteractDistance("target", 3);
 
 --Warnings
 
 --Rotations	
 
 
-return nil;
+	return nil;
 end
 
 function ConRO.Mage.Under10Def(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedDefSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Mage_Ability, ids.Mage_Form, ids.Mage_Buff, ids.Mage_Debuff, ids.Mage_PetAbility, ids.Mage_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level																					= UnitLevel("player");
-	local _Player_Percent_Health 																		= ConRO:PercentHealth('player');
-	local _is_PvP																						= ConRO:IsPvP();
-	local _in_combat 																					= UnitAffectingCombat('player');
-	local _party_size																					= GetNumGroupMembers();
-
-	local _is_PC																						= UnitPlayerControlled("target");
-	local _is_Enemy 																					= ConRO:TarHostile();
-	local _Target_Health 																				= UnitHealth('target');
-	local _Target_Percent_Health 																		= ConRO:PercentHealth('target');
-
---Resources
-	local _Mana, _Mana_Max, _Mana_Percent																= ConRO:PlayerPower('Mana');
-
---Racials
-	local _AncestralCall, _AncestralCall_RDY															= ConRO:AbilityReady(ids.Racial.AncestralCall, timeShift);
-	local _ArcanePulse, _ArcanePulse_RDY																= ConRO:AbilityReady(ids.Racial.ArcanePulse, timeShift);
-	local _Berserking, _Berserking_RDY																	= ConRO:AbilityReady(ids.Racial.Berserking, timeShift);
-	local _ArcaneTorrent, _ArcaneTorrent_RDY															= ConRO:AbilityReady(ids.Racial.ArcaneTorrent, timeShift);
+	wipe(ConRO.SuggestedDefSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Mage_Ability, ids.Mage_Form, ids.Mage_Buff, ids.Mage_Debuff, ids.Mage_PetAbility, ids.Mage_PvPTalent;
 
 --Abilities
 
 --Conditions
-	local _is_moving 																					= ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee															= ConRO:Targets("Melee");
-	local _target_in_10yrds 																			= CheckInteractDistance("target", 3);
 
 --Warnings
 
 --Rotations	
 
-return nil;
+	return nil;
 end
 
 function ConRO.Mage.Arcane(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Arc_Ability, ids.Arc_Form, ids.Arc_Buff, ids.Arc_Debuff, ids.Arc_PetAbility, ids.Arc_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
-
---Resources	
-	local _Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
-	local _ArcaneCharges = ConRO:PlayerPower('ArcaneCharges');
-
---Racials
-	local _AncestralCall, _AncestralCall_RDY = ConRO:AbilityReady(Racial.AncestralCall, timeShift);
-	local _ArcanePulse, _ArcanePulse_RDY = ConRO:AbilityReady(Racial.ArcanePulse, timeShift);
-	local _Berserking, _Berserking_RDY = ConRO:AbilityReady(Racial.Berserking, timeShift);
-	local _ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(Racial.ArcaneTorrent, timeShift);
+	wipe(ConRO.SuggestedSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Arc_Ability, ids.Arc_Form, ids.Arc_Buff, ids.Arc_Debuff, ids.Arc_PetAbility, ids.Arc_PvPTalent;
 
 --Abilties	
 	local _ArcaneBarrage, _ArcaneBarrage_RDY = ConRO:AbilityReady(Ability.ArcaneBarrage, timeShift);
@@ -247,11 +233,7 @@ function ConRO.Mage.Arcane(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _ShiftingPower, _ShiftingPower_RDY = ConRO:AbilityReady(Ability.ShiftingPower, timeShift);
 
 --Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 	local _enemies_in_15yrds, _target_in_15yrds = ConRO:Targets("15");
-	local _enemies_in_40yrds, _target_in_40yrds = ConRO:Targets("40");
 
 	if currentSpell == _ArcaneBlast then
 		_ArcaneCharges = _ArcaneCharges + 1;
@@ -473,22 +455,9 @@ function ConRO.Mage.Arcane(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 end
 
 function ConRO.Mage.ArcaneDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedDefSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Arc_Ability, ids.Arc_Form, ids.Arc_Buff, ids.Arc_Debuff, ids.Arc_PetAbility, ids.Arc_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
-
---Resources
-	local _Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
+	wipe(ConRO.SuggestedDefSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Arc_Ability, ids.Arc_Form, ids.Arc_Buff, ids.Arc_Debuff, ids.Arc_PetAbility, ids.Arc_PvPTalent;
 
 --Abilties
 	local _PrismaticBarrier, _PrismaticBarrier_RDY = ConRO:AbilityReady(Ability.PrismaticBarrier, timeShift);
@@ -497,10 +466,6 @@ function ConRO.Mage.ArcaneDef(_, timeShift, currentSpell, gcd, tChosen, pvpChose
 	local _MirrorImage, _MirrorImage_RDY = ConRO:AbilityReady(Ability.MirrorImage, timeShift);
 
 --Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
-
 	if tChosen[Ability.IceCold.talentID] then
 		_IceBlock, _IceBlock_RDY = ConRO:AbilityReady(Ability.IceBlockIC, timeShift);
 	end
@@ -521,28 +486,9 @@ function ConRO.Mage.ArcaneDef(_, timeShift, currentSpell, gcd, tChosen, pvpChose
 end
 
 function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Fire_Ability, ids.Fire_Form, ids.Fire_Buff, ids.Fire_Debuff, ids.Fire_PetAbility, ids.Fire_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
-
---Resources
-	local _Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
-
---Racials
-	local _AncestralCall, _AncestralCall_RDY = ConRO:AbilityReady(Racial.AncestralCall, timeShift);
-	local _ArcanePulse, _ArcanePulse_RDY = ConRO:AbilityReady(Racial.ArcanePulse, timeShift);
-	local _Berserking, _Berserking_RDY = ConRO:AbilityReady(Racial.Berserking, timeShift);
-	local _ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(Racial.ArcaneTorrent, timeShift);
+	wipe(ConRO.SuggestedSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Fire_Ability, ids.Fire_Form, ids.Fire_Buff, ids.Fire_Debuff, ids.Fire_PetAbility, ids.Fire_PvPTalent;
 
 --Abilities
 	local _ArcaneIntellect, _ArcaneIntellect_RDY = ConRO:AbilityReady(Ability.ArcaneIntellect, timeShift);
@@ -567,10 +513,6 @@ function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _ShiftingPower, _ShiftingPower_RDY = ConRO:AbilityReady(Ability.ShiftingPower, timeShift);
 
 --Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
-	local _enemies_in_40yrds, _target_in_40yrds = ConRO:Targets("40");
 
 --Indicators	
 	ConRO:AbilityInterrupt(_Counterspell, _Counterspell_RDY and ConRO:Interrupt());
@@ -730,22 +672,9 @@ function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 end
 
 function ConRO.Mage.FireDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedDefSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Fire_Ability, ids.Fire_Form, ids.Fire_Buff, ids.Fire_Debuff, ids.Fire_PetAbility, ids.Fire_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
-
---Resources
-	local _Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
+	wipe(ConRO.SuggestedDefSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Fire_Ability, ids.Fire_Form, ids.Fire_Buff, ids.Fire_Debuff, ids.Fire_PetAbility, ids.Fire_PvPTalent;
 
 --Abilities	
 	local _BlazingBarrier, _BlazingBarrier_RDY = ConRO:AbilityReady(Ability.BlazingBarrier, timeShift);
@@ -754,10 +683,6 @@ function ConRO.Mage.FireDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _MirrorImage, _MirrorImage_RDY = ConRO:AbilityReady(Ability.MirrorImage, timeShift);
 
 --Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
-
 	if tChosen[Ability.IceCold.talentID] then
 		_IceBlock, _IceBlock_RDY = ConRO:AbilityReady(Ability.IceBlockIC, timeShift);
 	end
@@ -778,28 +703,9 @@ function ConRO.Mage.FireDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 end
 
 function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Frost_Ability, ids.Frost_Form, ids.Frost_Buff, ids.Frost_Debuff, ids.Frost_PetAbility, ids.Frost_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
-
---Resources
-	local _Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
-
---Racials
-	local _AncestralCall, _AncestralCall_RDY = ConRO:AbilityReady(Racial.AncestralCall, timeShift);
-	local _ArcanePulse, _ArcanePulse_RDY = ConRO:AbilityReady(Racial.ArcanePulse, timeShift);
-	local _Berserking, _Berserking_RDY = ConRO:AbilityReady(Racial.Berserking, timeShift);
-	local _ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(Racial.ArcaneTorrent, timeShift);
+	wipe(ConRO.SuggestedSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Frost_Ability, ids.Frost_Form, ids.Frost_Buff, ids.Frost_Debuff, ids.Frost_PetAbility, ids.Frost_PvPTalent;
 
 --Abilities
 	local _ArcaneExplosion, _ArcaneExplosion_RDY = ConRO:AbilityReady(Ability.ArcaneExplosion, timeShift);
@@ -837,11 +743,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 		local _TimeWarp_BUFF, _TemporalDisplacement = ConRO:Heroism();
 
 --Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 	local _enemies_in_15yrds, _target_in_15yrds = ConRO:Targets("15");
-	local _enemies_in_40yrds, _target_in_40yrds = ConRO:Targets("40");
 
 	local _Pet_summoned = ConRO:CallPet();
 	local _Pet_assist = ConRO:PetAssist();
@@ -1043,7 +945,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				_FrozenOrb_RDY = false;
 			end
 
-			if _Blizzard_RDY and _enemies_in_40yrds >= 2 and (_FreezingRain_BUFF or (tChosen[Ability.IceCaller.talentID] and not _FrozenOrb_RDY)) and currentSpell ~= _Blizzard then
+			if _Blizzard_RDY and (ConRO_AutoButton:IsVisible() and _enemies_in_40yrds >= 2) and (_FreezingRain_BUFF or (tChosen[Ability.IceCaller.talentID] and not _FrozenOrb_RDY)) and currentSpell ~= _Blizzard then
 				tinsert(ConRO.SuggestedSpells, _Blizzard);
 				_Blizzard_RDY = false;
 			end
@@ -1077,22 +979,9 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 end
 
 function ConRO.Mage.FrostDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedDefSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Frost_Ability, ids.Frost_Form, ids.Frost_Buff, ids.Frost_Debuff, ids.Frost_PetAbility, ids.Frost_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
-
---Resources
-	local _Mana, _Mana_Max, _Mana_Percent = ConRO:PlayerPower('Mana');
+	wipe(ConRO.SuggestedDefSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Frost_Ability, ids.Frost_Form, ids.Frost_Buff, ids.Frost_Debuff, ids.Frost_PetAbility, ids.Frost_PvPTalent;
 
 --Abilities	
 	local _IceBarrier, _IceBarrier_RDY = ConRO:AbilityReady(Ability.IceBarrier, timeShift);
@@ -1102,15 +991,10 @@ function ConRO.Mage.FrostDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen
 	local _MirrorImage, _MirrorImage_RDY = ConRO:AbilityReady(Ability.MirrorImage, timeShift);
 
 --Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
-
-
 	if tChosen[Ability.IceCold.talentID] then
 		_IceBlock, _IceBlock_RDY = ConRO:AbilityReady(Ability.IceBlockIC, timeShift);
 	end
-	
+
 --Rotations	
 	if _ColdSnap_RDY and not _IceBlock_RDY then
 		tinsert(ConRO.SuggestedDefSpells, _ColdSnap);
@@ -1129,26 +1013,3 @@ function ConRO.Mage.FrostDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen
 	end
 	return nil;
 end
-
---[[function ConRO:BurnPhase()
-	local _, _ArcaneBlast_RDY = ConRO:AbilityReady(ids.Arc_Ability.ArcaneBlast, timeShift);
-	local _, _RadiantSpark_RDY = ConRO:AbilityReady(ids.Arc_Ability.RadiantSpark, timeShift);
-	local _, _TouchoftheMagi_RDY = ConRO:AbilityReady(ids.Arc_Ability.TouchoftheMagi, timeShift);
-		local _TouchoftheMagi_DEBUFF = ConRO:TargetAura(ids.Arc_Debuff.TouchoftheMagi, timeShift);
-
-	if self.arcaneBurnPhase == nil then
-		self.arcaneBurnPhase = false;
-	end
-
-	if not self.arcaneBurnPhase and ((self.PlayerTalents[ids.Arc_Ability.TouchoftheMagi.talentID] and _TouchoftheMagi_RDY) or not self.PlayerTalents[ids.Arc_Ability.TouchoftheMagi.talentID]) and ((self.PlayerTalents[ids.Arc_Ability.RadiantSpark.talentID] and _RadiantSpark_RDY) or not self.PlayerTalents[ids.Arc_Ability.RadiantSpark.talentID]) then
-		self.arcaneBurnPhase = true;
-		print("Beginning Burn Phase!")
-	end
-
-	if self.arcaneBurnPhase and self.PlayerTalents[ids.Arc_Ability.TouchoftheMagi.talentID] and not _TouchoftheMagi_RDY and not _TouchoftheMagi_DEBUFF and not _ArcaneBlast_RDY then
-		self.arcaneBurnPhase = false;
-		print("Cooldown and conserve!")
-	end
-
-	return self.arcaneBurnPhase
-end]]
