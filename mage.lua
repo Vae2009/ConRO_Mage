@@ -824,7 +824,7 @@ function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				break;
 			end
 
-			if _Pyroblast_RDY and ((_HotStreak_BUFF and (currentSpell == _Pyroblast or currentSpell == _Fireball)) or _FuryoftheSunKing_BUFF or _Hyperthermia_BUFF) then
+			if _Pyroblast_RDY and ((_HotStreak_BUFF and (currentSpell == _Pyroblast or currentSpell == _Fireball or currentSpell == _Scorch)) or _FuryoftheSunKing_BUFF or _Hyperthermia_BUFF) then
 				tinsert(ConRO.SuggestedSpells, _Pyroblast);
 				_FuryoftheSunKing_BUFF = false;
 				_HotStreak_BUFF = false;
