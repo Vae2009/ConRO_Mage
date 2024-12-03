@@ -284,7 +284,7 @@ function ConRO.Mage.Arcane(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			end
 
 			if not _in_combat then
-				if _MirrorImage_RDY then
+				if _MirrorImage_RDY and not (_is_PvP or ConRO_PvPButton:IsVisible()) then
 					tinsert(ConRO.SuggestedSpells, _MirrorImage);
 					_MirrorImage_RDY = false;
 					_Queue = _Queue + 1;
@@ -607,7 +607,7 @@ function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			end
 
 			if not _in_combat then
-				if _MirrorImage_RDY then
+				if _MirrorImage_RDY and not (_is_PvP or ConRO_PvPButton:IsVisible()) then
 					tinsert(ConRO.SuggestedSpells, _MirrorImage);
 					_MirrorImage_RDY = false;
 					_Queue = _Queue + 1;
@@ -952,33 +952,30 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Frost_Ability, ids.Frost_Form, ids.Frost_Buff, ids.Frost_Debuff, ids.Frost_PetAbility, ids.Frost_PvPTalent;
 
 --Abilities
-	local _ArcaneExplosion, _ArcaneExplosion_RDY = ConRO:AbilityReady(Ability.ArcaneExplosion, timeShift);
 	local _ArcaneIntellect, _ArcaneIntellect_RDY = ConRO:AbilityReady(Ability.ArcaneIntellect, timeShift);
 	local _Blink, _Blink_RDY = ConRO:AbilityReady(Ability.Blink, timeShift);
 	local _Blizzard, _Blizzard_RDY = ConRO:AbilityReady(Ability.Blizzard, timeShift);
 		local _FreezingRain_BUFF = ConRO:Aura(Buff.FreezingRain, timeShift);
 	local _CometStorm, _CometStorm_RDY, _CometStorm_CD = ConRO:AbilityReady(Ability.CometStorm, timeShift);
 	local _ConeofCold, _ConeofCold_RDY = ConRO:AbilityReady(Ability.ConeofCold, timeShift);
-		local _, _Snowstorm_COUNT = ConRO:Aura(Buff.Snowstorm, timeShift);
 	local _Counterspell, _Counterspell_RDY = ConRO:AbilityReady(Ability.Counterspell, timeShift);
 	local _Flurry, _Flurry_RDY, _Flurry_CD = ConRO:AbilityReady(Ability.Flurry, timeShift);
 		local _BrainFreeze_BUFF = ConRO:Aura(Buff.BrainFreeze, timeShift);
-		local _WintersChill_DEBUFF, _WintersChill_COUNT = ConRO:TargetAura(Debuff.WintersChill, timeShift);
+		local _, _WintersChill_COUNT = ConRO:TargetAura(Debuff.WintersChill, timeShift);
 	local _Frostbolt, _Frostbolt_RDY = ConRO:AbilityReady(Ability.Frostbolt, timeShift);
 	local _FrozenOrb, _FrozenOrb_RDY = ConRO:AbilityReady(Ability.FrozenOrb, timeShift);
-		local _FreezingWinds_FORM = ConRO:Form(Form.FreezingWinds);
 		local _ConcentratedCoolness_FrozenOrb, _, _ConcentratedCoolness_FrozenOrb_CD = ConRO:AbilityReady(PvPTalent.ConcentratedCoolness_FrozenOrb, timeShift);
 	local _GlacialSpike, _GlacialSpike_RDY = ConRO:AbilityReady(Ability.GlacialSpike, timeShift);
-		local _GlacialSpike_BUFF = ConRO:Aura(Buff.GlacialSpike, timeShift);
 	local _IceFloes, _IceFloes_RDY = ConRO:AbilityReady(Ability.IceFloes, timeShift);
 	local _IceForm, _, _IceForm_CD = ConRO:AbilityReady(PvPTalent.IceForm, timeShift);
 	local _IceLance, _IceLance_RDY = ConRO:AbilityReady(Ability.IceLance, timeShift);
 		local _, _Icicles_COUNT = ConRO:Aura(Buff.Icicles, timeShift);
-		local _FingersofFrost_BUFF, _FingersofFrost_COUNT = ConRO:Aura(Buff.FingersofFrost, timeShift);
+		local _, _FingersofFrost_COUNT = ConRO:Aura(Buff.FingersofFrost, timeShift);
 	local _IceNova, _IceNova_RDY = ConRO:AbilityReady(Ability.IceNova, timeShift);
 	local _IcyVeins, _IcyVeins_RDY, _IcyVeins_CD = ConRO:AbilityReady(Ability.IcyVeins, timeShift);
 		local _IcyVeins_BUFF, _, _IcyVeins_DUR = ConRO:Aura(Buff.IcyVeins, timeShift);
 		local _, _DeathsChill_COUNT = ConRO:Aura(Buff.DeathsChill, timeShift);
+	local _MirrorImage, _MirrorImage_RDY = ConRO:AbilityReady(Ability.MirrorImage, timeShift);
 	local _RayofFrost, _RayofFrost_RDY = ConRO:AbilityReady(Ability.RayofFrost, timeShift);
 	local _ShiftingPower, _ShiftingPower_RDY = ConRO:AbilityReady(Ability.ShiftingPower, timeShift);
 	local _Spellsteal, _Spellsteal_RDY = ConRO:AbilityReady(Ability.Spellsteal, timeShift);
@@ -1048,6 +1045,13 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			end
 
 			if not _in_combat then
+				if _MirrorImage_RDY and not (_is_PvP or ConRO_PvPButton:IsVisible()) then
+					tinsert(ConRO.SuggestedSpells, _MirrorImage);
+					_MirrorImage_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
 				if _Frostbolt_RDY and currentSpell ~= _Frostbolt then
 					tinsert(ConRO.SuggestedSpells, _Frostbolt);
 					_Frostbolt_RDY = false;
