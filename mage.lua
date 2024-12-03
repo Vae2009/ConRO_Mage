@@ -845,7 +845,7 @@ function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				break;
 			end
 
-			if _FireBlast_RDY and _FireBlast_CHARGES >= 1 and _HeatingUp_BUFF then
+			if _FireBlast_RDY and _FireBlast_CHARGES >= 1 and _HeatingUp_BUFF and currentSpell then
 				tinsert(ConRO.SuggestedSpells, _FireBlast);
 				_FireBlast_RDY = false;
 				_FireBlast_CHARGES = _FireBlast_CHARGES - 1;
