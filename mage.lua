@@ -284,7 +284,7 @@ function ConRO.Mage.Arcane(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			end
 
 			if not _in_combat then
-				if _MirrorImage_RDY and not (_is_PvP or ConRO_PvPButton:IsVisible()) then
+				if _MirrorImage_RDY and not (_is_PvP or ConRO_PvPButton:IsVisible()) and ConRO:FullMode(_MirrorImage) then
 					tinsert(ConRO.SuggestedSpells, _MirrorImage);
 					_MirrorImage_RDY = false;
 					_Queue = _Queue + 1;
@@ -607,7 +607,7 @@ function ConRO.Mage.Fire(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			end
 
 			if not _in_combat then
-				if _MirrorImage_RDY and not (_is_PvP or ConRO_PvPButton:IsVisible()) then
+				if _MirrorImage_RDY and not (_is_PvP or ConRO_PvPButton:IsVisible()) and ConRO:FullMode(_MirrorImage) then
 					tinsert(ConRO.SuggestedSpells, _MirrorImage);
 					_MirrorImage_RDY = false;
 					_Queue = _Queue + 1;
@@ -1045,7 +1045,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 			end
 
 			if not _in_combat then
-				if _MirrorImage_RDY and not (_is_PvP or ConRO_PvPButton:IsVisible()) then
+				if _MirrorImage_RDY and not (_is_PvP or ConRO_PvPButton:IsVisible()) and ConRO:FullMode(_MirrorImage) then
 					tinsert(ConRO.SuggestedSpells, _MirrorImage);
 					_MirrorImage_RDY = false;
 					_Queue = _Queue + 1;
