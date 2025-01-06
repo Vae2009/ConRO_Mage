@@ -584,12 +584,13 @@ local ConRO_Mage, ids = ...;
 		PrismaticCloak = {spellID = 198064},
 	}
 	ids.Frost_Form = {
+		DeathsChill = 454371,
 		FreezingWinds = 382106,
 	}
 	ids.Frost_Buff = {
 		ArcaneIntellect = 1459,
 		BrainFreeze = 190446,
-		DeathsChill = 454371,
+		ExcessFire = 438624,
 		ExcessFrost = 438611,
 		FingersofFrost = 44544,
 		FreezingRain = 270232,

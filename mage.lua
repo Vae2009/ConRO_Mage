@@ -963,7 +963,8 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 		local _BrainFreeze_BUFF = ConRO:Aura(Buff.BrainFreeze, timeShift);
 		local _, _WintersChill_COUNT = ConRO:TargetAura(Debuff.WintersChill, timeShift);
 	local _Frostbolt, _Frostbolt_RDY = ConRO:AbilityReady(Ability.Frostbolt, timeShift);
-	local _FrozenOrb, _FrozenOrb_RDY = ConRO:AbilityReady(Ability.FrozenOrb, timeShift);
+		local _ExcessFire_BUFF = ConRO:Aura(Buff.ExcessFire, timeShift);
+	local _FrozenOrb, _FrozenOrb_RDY, _FrozenOrb_CD = ConRO:AbilityReady(Ability.FrozenOrb, timeShift);
 		local _ConcentratedCoolness_FrozenOrb, _, _ConcentratedCoolness_FrozenOrb_CD = ConRO:AbilityReady(PvPTalent.ConcentratedCoolness_FrozenOrb, timeShift);
 	local _GlacialSpike, _GlacialSpike_RDY = ConRO:AbilityReady(Ability.GlacialSpike, timeShift);
 	local _IceFloes, _IceFloes_RDY = ConRO:AbilityReady(Ability.IceFloes, timeShift);
@@ -974,7 +975,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	local _IceNova, _IceNova_RDY = ConRO:AbilityReady(Ability.IceNova, timeShift);
 	local _IcyVeins, _IcyVeins_RDY, _IcyVeins_CD = ConRO:AbilityReady(Ability.IcyVeins, timeShift);
 		local _IcyVeins_BUFF, _, _IcyVeins_DUR = ConRO:Aura(Buff.IcyVeins, timeShift);
-		local _, _DeathsChill_COUNT = ConRO:Aura(Buff.DeathsChill, timeShift);
+		local _, _DeathsChill_COUNT = ConRO:Form(Form.DeathsChill);
 	local _MirrorImage, _MirrorImage_RDY = ConRO:AbilityReady(Ability.MirrorImage, timeShift);
 	local _RayofFrost, _RayofFrost_RDY = ConRO:AbilityReady(Ability.RayofFrost, timeShift);
 	local _ShiftingPower, _ShiftingPower_RDY = ConRO:AbilityReady(Ability.ShiftingPower, timeShift);
@@ -1015,6 +1016,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 		if pvpChosen[PvPTalent.ConcentratedCoolness.spellID] then
 			_FrozenOrb_RDY = _FrozenOrb_RDY and _ConcentratedCoolness_FrozenOrb_CD <= 0;
 			_FrozenOrb = _ConcentratedCoolness_FrozenOrb;
+			_FrozenOrb_CD = _ConcentratedCoolness_FrozenOrb_CD;
 		end
 	end
 
@@ -1079,7 +1081,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				break;
 			end
 
-			if _ConeofCold_RDY and tChosen[Ability.ColdestSnap.talentID] and _enemies_in_10yrds >= 3 and not _FrozenOrb_RDY and not _CometStorm_RDY then
+			if _ConeofCold_RDY and tChosen[Ability.ColdestSnap.talentID] and _enemies_in_15yrds >= 3 and not _FrozenOrb_RDY and not _CometStorm_RDY then
 				tinsert(ConRO.SuggestedSpells, _ConeofCold);
 				_ConeofCold_RDY = false;
 				_CometStorm_RDY = true;
@@ -1089,7 +1091,7 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				break;
 			end
 
-			if _CometStorm_RDY and not _IcyVeins_BUFF and _WintersChill_COUNT >= 1 and ((ConRO_AutoButton:IsVisible() and _enemies_in_40yrds <= 1) or ConRO_SingleButton:IsVisible()) then
+			if _CometStorm_RDY and _WintersChill_COUNT > 1 and ((ConRO_AutoButton:IsVisible() and _enemies_in_40yrds <= 1) or ConRO_SingleButton:IsVisible()) then
 				tinsert(ConRO.SuggestedSpells, _CometStorm);
 				_CometStorm_RDY = false;
 				_WintersChill_COUNT = _WintersChill_COUNT - 1;
@@ -1097,11 +1099,28 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				break;
 			end
 
-			if _Flurry_RDY and _WintersChill_COUNT <= 0 and (currentSpell == _Frostbolt or currentSpell == _GlacialSpike) then
+			if _Flurry_RDY and _WintersChill_COUNT <= 0 and ((not tChosen[Ability.DeathsChill.talentID] and currentSpell == _Frostbolt) or currentSpell == _GlacialSpike) then
 				tinsert(ConRO.SuggestedSpells, _Flurry);
 				_Flurry_RDY = false;
 				_WintersChill_COUNT = 2;
 				_Icicles_COUNT = _Icicles_COUNT + 1;
+				_Queue = _Queue + 1;
+				break;
+			end
+
+			if (_GlacialSpike_RDY or (_Icicles_COUNT >= 5 and tChosen[Ability.GlacialSpike.talentID])) and (_WintersChill_COUNT >= 1 or _Flurry_RDY) and currentSpell ~= _GlacialSpike and tChosen[Ability.DeathsChill.talentID] and ((ConRO_AutoButton:IsVisible() and _enemies_in_40yrds <= 1) or ConRO_SingleButton:IsVisible()) then
+				tinsert(ConRO.SuggestedSpells, _GlacialSpike);
+				_GlacialSpike_RDY = false;
+				_Icicles_COUNT = 0;
+				_WintersChill_COUNT = _WintersChill_COUNT - 1;
+				_Queue = _Queue + 1;
+				break;
+			end
+
+			if _RayofFrost_RDY and (_WintersChill_COUNT == 1 or (ConRO.lastSpellId == _IceLance and _WintersChill_COUNT == 2)) and tChosen[Ability.DeathsChill.talentID] and ((ConRO_AutoButton:IsVisible() and _enemies_in_40yrds <= 1) or ConRO_SingleButton:IsVisible()) and ConRO:FullMode(_RayofFrost) then
+				tinsert(ConRO.SuggestedSpells, _RayofFrost);
+				_RayofFrost_RDY = false;
+				_WintersChill_COUNT = _WintersChill_COUNT - 1;
 				_Queue = _Queue + 1;
 				break;
 			end
@@ -1113,7 +1132,14 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				break;
 			end
 
-			if _CometStorm_RDY and not _IcyVeins_BUFF and _WintersChill_COUNT >= 1 then
+			if _Frostbolt_RDY and _IcyVeins_BUFF and _IcyVeins_DUR >= 8 and _DeathsChill_COUNT < 14 and ((ConRO_AutoButton:IsVisible() and _enemies_in_40yrds >= 3) or ConRO_AoEButton:IsVisible()) then
+				tinsert(ConRO.SuggestedSpells, _Frostbolt);
+				_Icicles_COUNT = _Icicles_COUNT + 1;
+				_Queue = _Queue + 1;
+				break;
+			end
+
+			if _CometStorm_RDY and ((ConRO_AutoButton:IsVisible() and _enemies_in_40yrds >= 3) or ConRO_AoEButton:IsVisible()) then
 				tinsert(ConRO.SuggestedSpells, _CometStorm);
 				_CometStorm_RDY = false;
 				_WintersChill_COUNT = _WintersChill_COUNT - 1;
@@ -1121,21 +1147,21 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				break;
 			end
 
-			if _Blizzard_RDY and tChosen[Ability.FreezingRain.talentID] and tChosen[Ability.IceCaller.talentID] and ((ConRO_AutoButton:IsVisible() and _enemies_in_40yrds >= 3) or ConRO_AoEButton:IsVisible()) then
+			if _Blizzard_RDY and tChosen[Ability.FreezingRain.talentID] and tChosen[Ability.IceCaller.talentID] and currentSpell ~= _Blizzard and ((ConRO_AutoButton:IsVisible() and _enemies_in_40yrds >= 3) or ConRO_AoEButton:IsVisible()) then
 				tinsert(ConRO.SuggestedSpells, _Blizzard);
 				_Blizzard_RDY = false;
 				_Queue = _Queue + 1;
 				break;
 			end
 
-			if _ShiftingPower_RDY and _IcyVeins_CD >= 20 and _Flurry_CD >= 20 and ConRO:FullMode(_ShiftingPower) then
+			if _ShiftingPower_RDY and _FrozenOrb_CD >= 20 and _CometStorm_CD >= 15 and _IcyVeins_CD >= 20 and not _IcyVeins_BUFF and currentSpell ~= _ShiftingPower and ConRO:FullMode(_ShiftingPower) then
 				tinsert(ConRO.SuggestedSpells, _ShiftingPower);
 				_ShiftingPower_RDY = false;
 				_Queue = _Queue + 1;
 				break;
 			end
 
-			if (_GlacialSpike_RDY or (_Icicles_COUNT >= 5 and tChosen[Ability.GlacialSpike.talentID])) and (_WintersChill_COUNT >= 1 or _Flurry_RDY) then
+			if (_GlacialSpike_RDY or (_Icicles_COUNT >= 5 and tChosen[Ability.GlacialSpike.talentID])) and (_WintersChill_COUNT >= 1 or _Flurry_RDY) and currentSpell ~= _GlacialSpike then
 				tinsert(ConRO.SuggestedSpells, _GlacialSpike);
 				_GlacialSpike_RDY = false;
 				_Icicles_COUNT = 0;
@@ -1148,6 +1174,16 @@ function ConRO.Mage.Frost(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 				tinsert(ConRO.SuggestedSpells, _RayofFrost);
 				_RayofFrost_RDY = false;
 				_WintersChill_COUNT = _WintersChill_COUNT - 1;
+				_Queue = _Queue + 1;
+				break;
+			end
+
+			if _IceLance_RDY and _ExcessFire_BUFF and _WintersChill_COUNT >= 2 then
+				tinsert(ConRO.SuggestedSpells, _IceLance);
+				_ExcessFire_BUFF = false;
+				_FingersofFrost_COUNT = _FingersofFrost_COUNT - 1;
+				_WintersChill_COUNT = _WintersChill_COUNT - 1;
+				_Icicles_COUNT = _Icicles_COUNT + 1;
 				_Queue = _Queue + 1;
 				break;
 			end
