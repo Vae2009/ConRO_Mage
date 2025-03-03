@@ -1,26 +1,29 @@
 local ConRO_Mage, ids = ...;
 
 --General
-	ids.Racial = {
-		AncestralCall = {spellID = 274738},
-		ArcanePulse = {spellID = 260364},
-		ArcaneTorrent = {spellID = 50613},
-		Berserking = {spellID = 26297},
-		Cannibalize = {spellID = 20577},
-		GiftoftheNaaru = {spellID = 59548},
-		Shadowmeld = {spellID = 58984},
-	}
-	ids.HeroSpec = {
-		Sunfury = 39,
-		Spellslinger = 40,
-		Frostfire = 41,
-	}
+ids.racial = {
+	AncestralCall = {spellID = 274738},
+	ArcanePulse = {spellID = 260364},
+	ArcaneTorrent = {spellID = 50613},
+	Berserking = {spellID = 26297},
+	Cannibalize = {spellID = 20577},
+	GiftoftheNaaru = {spellID = 59548},
+	Shadowmeld = {spellID = 58984},
+}
+ids.hero_spec = {
+	Sunfury = 39,
+	Spellslinger = 40,
+	Frostfire = 41,
+}
 
---Arcane
-	ids.Arc_Ability = {
-	--Mage Baseline
+ids.arcane = {
+	ability = {
+	--Baseline
+		ArcaneBarrage = {spellID = 44425},
+		ArcaneBlast = {spellID = 30451},
 		ArcaneExplosion = {spellID = 1449},
 		ArcaneIntellect = {spellID = 1459},
+		ArcaneOrb = {spellID = 153626},
 		Blink = {spellID = 1953},
 		ConeofCold = {spellID = 120},
 		ConjureRefreshment = {spellID = 190336},
@@ -36,14 +39,10 @@ local ConRO_Mage, ids = ...;
 		Teleport = {
 			},
 		TimeWarp = {spellID = 80353},
-	--Arcane Baseline
-		ArcaneBarrage = {spellID = 44425},
-		ArcaneBlast = {spellID = 30451},
-		ArcaneOrb = {spellID = 153626},
-		--Passive
+	--Passive
 		Clearcasting = {spellID = 79684},
 		MasterySavant = {spellID = 190740},
-	--Mage
+	--Mage Talents
 		PrismaticBarrier = {spellID = 235450, talentID = 80180},
 		IceBlock = {spellID = 45438, talentID = 80181},
 		OverflowingEnergy = {spellID = 390218, talentID = 80179},
@@ -94,7 +93,7 @@ local ConRO_Mage, ids = ...;
 		InspiredIntellect = {spellID = 458437, talentID = 126060},
 		MassInvisibility = {spellID = 414664, talentID = 115878},
 		MassBarrier = {spellID = 414660, talentID = 125817},
-	--Arcane
+	--Arcane Talents
 		ArcaneMissiles = {spellID = 5143, talentID = 126537},
 		Amplification = {spellID = 236628, talentID = 126515},
 		NetherPrecision = {spellID = 383782, talentID = 126543},
@@ -138,7 +137,7 @@ local ConRO_Mage, ids = ...;
 		NetherMunitions = {spellID = 450206, talentID = 126504},
 		OrbBarrage = {spellID = 384858, talentID = 126513},
 		Leydrinker = {spellID = 452196, talentID = 126544},
-	--Hero
+	--Hero Talents
 	--Spellslinger
 		SplinteringSorcery = {spellID = 443739, talentID = 117267},
 		AuguryAbounds = {spellID = 443783, talentID = 117265},
@@ -171,8 +170,8 @@ local ConRO_Mage, ids = ...;
 		Rondurmancy = {spellID = 449596, talentID = 117251},
 		IgnitetheFuture = {spellID = 449558, talentID = 123833},
 		MemoryofAlar = {spellID = 449619, talentID = 117249},
-	}
-	ids.Arc_PvPTalent = {
+	},
+	pvp_talent = {
 		ArcaneEmpowerment = 276741,
 		TormenttheWeak = 198151,
 		MasterofEscape = 210476,
@@ -183,41 +182,37 @@ local ConRO_Mage, ids = ...;
 		DampenedMagic = 236788,
 		Kleptomania = 198100,
 		PrismaticCloak = 198064,
-	}
-	ids.Arc_Form = {
-		ArcaneHarmony = 384455,
-		PresenceofMind = 205025,
-		IncantersFlow = 116267,
-	}
-	ids.Arc_Buff = {
+	},
+	buff = {
 		Aethervision = 467634,
 		ArcaneFamiliar = 210126,
+		ArcaneHarmony = 384455,
 		ArcaneIntellect = 1459,
 		ArcaneSoul = 451038,
 		ArcaneSurge = 365362,
 		ArcaneTempo = 383997,
 		Clearcasting = 263725,
 		ClearcastingAE = 276743,
+		IncantersFlow = 116267,
 		Intuition = 455681,
 		Evocation = 12051,
 		GloriousIncandescence = 451073,
 		Leydrinker = 453758,
 		NetherPrecision = 383783,
+		PresenceofMind = 205025,
 		PrismaticBarrier = 235450,
 		SiphonStorm = 384267,
 		UnerringProficiency = 444981,
-	}
-	ids.Arc_Debuff = {
+	},
+	debuff = {
 		TemporalDisplacement = 80354,
 		TouchoftheMagi = 210824,
-	}
-	ids.Arc_PetAbility = {
+	},
+}
 
-	}
-
---Fire
-	ids.Fire_Ability = {
-	--Mage Baseline
+ids.fire = {
+	ability = {
+	--Baseline
 		ArcaneExplosion = {spellID = 1449},
 		ArcaneIntellect = {spellID = 1459},
 		Blink = {spellID = 1953},
@@ -225,6 +220,8 @@ local ConRO_Mage, ids = ...;
 		ConjureRefreshment = {spellID = 190336},
 		Counterspell = {spellID = 2139},
 		FireBlast = {spellID = 319836},
+		Fireball = {spellID = 133},
+		Flamestrike = {spellID = 2120},
 		FrostNova = {spellID = 122},
 		Frostbolt = {spellID = 116},
 		Invisibility = {spellID = 66},
@@ -235,14 +232,11 @@ local ConRO_Mage, ids = ...;
 		Teleport = {
 		},
 		TimeWarp = {spellID = 80353},
-	--Fire Baseline
-		Fireball = {spellID = 133},
-		Flamestrike = {spellID = 2120},
-		--Passive
+	--Passive
 		Cauterize = {spellID = 86949},
 		HotStreak = {spellID = 195283},
 		MasteryIgnite = {spellID = 12846},
-	--Mage
+	--Mage Talents
 		BlazingBarrier = {spellID = 235313, talentID = 80178},
 		IceBlock = {spellID = 45438, talentID = 80181},
 		OverflowingEnergy = {spellID = 390218, talentID = 80179},
@@ -293,7 +287,7 @@ local ConRO_Mage, ids = ...;
 		InspiredIntellect = {spellID = 458437, talentID = 126060},
 		MassInvisibility = {spellID = 414664, talentID = 115878},
 		MassBarrier = {spellID = 414660, talentID = 125817},
-	--Fire
+	--Fire Talents
 		Pyroblast = {spellID = 11366, talentID = 124759},
 		FireBlast_Fire = {spellID = 108853, talentID = 124750},
 		Firestarter = {spellID = 205026, talentID = 126025},
@@ -344,7 +338,7 @@ local ConRO_Mage, ids = ...;
 		UnleashedInferno = {spellID = 416506, talentID = 124790},
 		DeepImpact = {spellID = 416719, talentID = 124761},
 		BlastZone = {spellID = 451755, talentID = 124787},
-	--Hero
+	--Hero Talents
 	--Frostfire
 		FrostfireMastery = {spellID = 431038, talentID = 117239},
 		ImbuedWarding = {spellID = 431066, talentID = 117245},
@@ -375,8 +369,8 @@ local ConRO_Mage, ids = ...;
 		Rondurmancy = {spellID = 449596, talentID = 117251},
 		IgnitetheFuture = {spellID = 449558, talentID = 123833},
 		MemoryofAlar = {spellID = 449619, talentID = 117249},
-	}
-	ids.Fire_PvPTalent = {
+	},
+	pvp_talent = {
 		--Honorable Medallion
 		Adaptation = 214027,
 		Relentless = 196029,
@@ -393,11 +387,8 @@ local ConRO_Mage, ids = ...;
 		PrismaticCloak = 198064,
 		DampenedMagic = 236788,
 		Kleptomania = 198100,
-	}
-	ids.Fire_Form = {
-
-	}
-	ids.Fire_Buff = {
+	},
+	buff = {
 		ArcaneIntellect = 1459,
 		BlazingBarrier = 235313,
 		Combustion = 190319,
@@ -412,21 +403,21 @@ local ConRO_Mage, ids = ...;
 		IncantersFlow = 116267,
 		LivingBomb = 217694,
 		FuryoftheSunKing = 383882,
-	}
-	ids.Fire_Debuff = {
+	},
+	debuff = {
 		Ignite = 12654,
 		TemporalDisplacement = 80354,
-	}
-	ids.Fire_PetAbility = {
+	},
+}
 
-	}
-
---Frost
-	ids.Frost_Ability = {
-	--Mage Baseline
+ids.frost = {
+	ability = {
+	--Baseline
 		ArcaneExplosion = {spellID = 1449},
 		ArcaneIntellect = {spellID = 1459},
 		Blink = {spellID = 1953},
+		Blizzard = {spellID = 190356},
+		ColdSnap = {spellID = 235219},
 		ConeofCold = {spellID = 120},
 		ConjureRefreshment = {spellID = 190336},
 		Counterspell = {spellID = 2139},
@@ -441,12 +432,9 @@ local ConRO_Mage, ids = ...;
 		Teleport = {
 			},
 		TimeWarp = {spellID = 80353},
-	--Frost Baseline
-		Blizzard = {spellID = 190356},
-		ColdSnap = {spellID = 235219},
-		--Passive
+	--Passive
 		MasteryIcicles = {spellID = 76613},
-	--Mage
+	--Mage Talents
 		IceBarrier = {spellID = 11426, talentID = 80176},
 		IceBlock = {spellID = 45438, talentID = 80181},
 		OverflowingEnergy = {spellID = 390218, talentID = 80179},
@@ -497,7 +485,7 @@ local ConRO_Mage, ids = ...;
 		InspiredIntellect = {spellID = 458437, talentID = 126060},
 		MassInvisibility = {spellID = 414664, talentID = 115878},
 		MassBarrier = {spellID = 414660, talentID = 125817},
-	--Frost
+	--Frost Talents
 		IceLance = {spellID = 30455, talentID = 80241},
 		FrozenOrb = {spellID = 84714, talentID = 80242},
 		FingersofFrost = {spellID = 112965, talentID = 80227},
@@ -537,7 +525,7 @@ local ConRO_Mage, ids = ...;
 		GlacialSpike = {spellID = 199786, talentID = 80220},
 		Cryopathy = {spellID = 417491, talentID = 80215},
 		SplinteringRay = {spellID = 418733, talentID = 128077},
-	--Hero
+	--Hero Talents
 	--Frostfire
 		FrostfireMastery = {spellID = 431038, talentID = 117239},
 		ImbuedWarding = {spellID = 431066, talentID = 117245},
@@ -569,8 +557,8 @@ local ConRO_Mage, ids = ...;
 		ForceofWill = {spellID = 444719, talentID = 117259},
 		SpellfrostTeachings = {spellID = 444986, talentID = 117258},
 		Splinterstorm = {spellID = 443742, talentID = 117257},
-	}
-	ids.Frost_PvPTalent = {
+	},
+	pvp_talent = {
 		DampenedMagic = {spellID = 236788},
 		Kleptomania = {spellID = 198100},
 		ChilledtotheBone = {spellID = 198126},
@@ -582,28 +570,24 @@ local ConRO_Mage, ids = ...;
 		IceForm = {spellID = 198144},
 		NetherwindArmor = {spellID = 198062},
 		PrismaticCloak = {spellID = 198064},
-	}
-	ids.Frost_Form = {
-		DeathsChill = 454371,
-		FreezingWinds = 382106,
-	}
-	ids.Frost_Buff = {
+	},
+	buff = {
 		ArcaneIntellect = 1459,
 		BrainFreeze = 190446,
+		DeathsChill = 454371,
 		ExcessFire = 438624,
 		ExcessFrost = 438611,
 		FingersofFrost = 44544,
 		FreezingRain = 270232,
+		FreezingWinds = 382106,
 		FrostfireEmpowerment = 431177,
 		GlacialSpike = 199844,
 		IceBarrier = 11426,
 		Icicles = 205473,
 		IcyVeins = 12472,
-	}
-	ids.Frost_Debuff = {
+	},
+	debuff = {
 		TemporalDisplacement = 80354,
 		WintersChill = 228358,
-	}
-	ids.Frost_PetAbility = {
-
-	}
+	},
+}
