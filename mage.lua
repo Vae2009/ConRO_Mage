@@ -12,8 +12,8 @@ function ConRO:EnableRotationModule(mode)
 	self.ModuleOnEnable = ConRO.Mage.CheckPvPTalents;
 	if mode == 0 then
 		self.Description = "Mage [No Specialization Under 10]";
-		self.NextSpell = ConRO.Mage.Under10;
-		self.NextDef = ConRO.Mage.Under10Def;
+		self.NextSpell = ConRO.Mage.Disabled;
+		self.NextDef = ConRO.Mage.Disabled;
 		self.ToggleHealer();
 	end;
 	if mode == 1 then
